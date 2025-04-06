@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qingniao.judge.mapper.ProblemSetMapper">
+    <insert id="insert" parameterType="ProblemSet">
+        INSERT INTO problemset(id, name, introduction, createTime, updateTime, creatorID, status)
+        VALUES (#{id}, #{name}, #{introduction}, #{createTime}, #{updateTime}, #{creatorID}, #{status});
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM problemset WHERE id = #{id};
+    </delete>
+
+    <update id="update" parameterType="ProblemSet">
+        UPDATE problemset
+        <set>
+            <if test="name != null">name = #{name}</if>
+            <if test="introduction != null">introduction = #{introduction}</if>
+            <if test="updateTime != null">updateTime = #{updateTime}</if>
+            <if test="status != null">status = #{status}</if>
+        </set>
+        WHERE id = #{id};
+    </update>
+
+    <select id="selectOne">
+        SELECT * FROM problemset WHERE id = #{id};
+    </select>
+
+    <select id="selectList">
+        SELECT id, name, introduction, createTime, updateTime FROM problemset
+        WHERE status = 'PUBLIC';
+    </select>
+
+    <select id="selectStatus" resultType="PSetStatus">
+        SELECT status FROM problemset WHERE id = #{id};
+    </select>
+
+    <select id="selectByUser">
+        SELECT id FROM problemset WHERE creatorID = #{creatorID};
+    </select>
+
+    <select id="selectByKeyword" resultType="ProblemSet">
+        SELECT id, name, introduction, createTime, updateTime FROM problemset
+        WHERE status = 'PUBLIC'
+        AND name LIKE CONCAT('%', #{keyword}, '%');
+    </select>
+</mapper>

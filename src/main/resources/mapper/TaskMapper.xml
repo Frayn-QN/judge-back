@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qingniao.judge.mapper.TaskMapper">
+    <insert id="insert" parameterType="Task">
+        INSERT INTO task(id, problemID, userID, judgeTime, answer, status, score)
+        VALUES (#{id}, #{problemID}, #{userID}, #{judgeTime}, #{answer}, #{status}, #{score});
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM task WHERE id = #{id};
+    </delete>
+
+    <delete id="deleteByUser">
+        DELETE FROM task WHERE userID = #{userID};
+    </delete>
+
+    <update id="update" parameterType="Task">
+        UPDATE task
+        <set>
+            <if test="status != null">status = #{status}</if>
+            <if test="score != null">score = #{score}</if>
+            <if test="result != null">result = #{result}</if>
+        </set>
+        WHERE id = #{id};
+    </update>
+
+    <select id="selectOne">
+        SELECT * FROM task WHERE id = #{id};
+    </select>
+
+    <select id="selectByUser">
+        SELECT id, judgeTime, status, score FROM task
+        WHERE userID = #{userID}
+        ORDER BY judgeTime DESC;
+    </select>
+    
+    <select id="selectByProblem">
+        SELECT id, status, score FROM task
+        WHERE problemID = #{problemID};
+    </select>
+</mapper>

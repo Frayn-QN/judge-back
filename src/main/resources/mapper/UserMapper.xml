@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qingniao.judge.mapper.UserMapper">
+    <insert id="insert" parameterType="User">
+        INSERT INTO user(id, email, authority, username, password, avatar, introduction, registerTime)
+        VALUES (#{id}, #{email}, #{authority}, #{username}, #{password}, #{avatar}, #{introduction}, #{registerTime});
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM user WHERE id = #{id};
+    </delete>
+    
+    <update id="update" parameterType="User">
+        UPDATE user
+        <set>
+            <if test="email != null">email = #{email}</if>
+            <if test="authority != null">authority = #{authority}</if>
+            <if test="username != null">username = #{username}</if>
+            <if test="password != null">password = #{password}</if>
+            <if test="avatar != null">avatar = #{avatar}</if>
+            <if test="introduction != null">introduction = #{introduction}</if>
+        </set>
+        WHERE id = #{id};
+    </update>
+
+    <select id="selectOne">
+        SELECT * FROM user WHERE id = #{id};
+    </select>
+
+    <select id="selectList">
+        SELECT id, email, username, registerTime FROM user;
+    </select>
+
+    <select id="selectAuthority" resultType="UserAuth">
+        SELECT authority FROM user WHERE id = #{id};
+    </select>
+
+    <select id="selectByEmail" resultType="User">
+        SELECT * FROM user WHERE  email = #{email};
+    </select>
+
+    <select id="selectByUsername" resultType="User">
+        SELECT id FROM user WHERE username = #{username};
+    </select>
+
+    <select id="selectByKeyword" resultType="User">
+        SELECT * FROM user
+        WHERE email LIKE CONCAT('%', #{keyword}, '%')
+        OR username LIKE CONCAT('%', #{keyword}, '%');
+    </select>
+
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qingniao.judge.mapper.PSets_ProblemsMapper">
+    <insert id="insert">
+        INSERT INTO psets_problems(psetID, problemID)
+        VALUES (#{psetID}, #{problemID});
+    </insert>
+
+    <delete id="deleteByPSet">
+        DELETE FROM psets_problems WHERE psetID = #{psetID};
+    </delete>
+
+    <delete id="deleteByProblem">
+        DELETE FROM psets_problems WHERE problemID = #{problemID};
+    </delete>
+
+    <delete id="deleteByPSetAndProblem">
+        DELETE FROM psets_problems
+        WHERE psetID = #{psetID} AND problemID = #{problemID};
+    </delete>
+
+    <select id="selectByPSet" resultType="Problem">
+        SELECT t2.id, t2.name, t2.serial, t2.level
+        FROM psets_problems AS t1
+        JOIN problem AS t2 ON t1.problemID = t2.id
+        WHERE t1.psetID = #{psetID};
+    </select>
+</mapper>

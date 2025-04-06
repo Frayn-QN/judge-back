@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qingniao.judge.mapper.PSets_UsersMapper">
+    <insert id="insert">
+        INSERT INTO psets_users(psetID, userID, authority)
+        VALUES (#{psetID}, #{userID}, #{authority});
+    </insert>
+
+    <delete id="deleteByPSet">
+        DELETE FROM psets_users WHERE psetID = #{psetID};
+    </delete>
+
+    <delete id="deleteByUser">
+        DELETE FROM psets_users WHERE userID = #{userID};
+    </delete>
+
+    <update id="updateUserAuth">
+        UPDATE psets_users
+        SET authority = #{newAuth}
+        WHERE psetID = #{psetID} AND userID = #{userID};
+    </update>
+
+    <select id="selectByPSetAndAuth" resultType="User">
+        SELECT t2.id, t2.email, t2.username, t2.registerTime
+        FROM psets_users AS t1
+        JOIN user AS t2 ON t1.userID = t2.id
+        WHERE t1.psetID = #{psetID} AND t1.authority = #{authority};
+    </select>
+
+    <select id="selectByUserAndAuth" resultType="ProblemSet">
+        SELECT t2.id, t2.name, t2.introduction, t2.createTime, t2.updateTime
+        FROM psets_users AS t1
+        JOIN problemset AS t2 ON t1.psetID = t2.id
+        WHERE t1.userID = #{userID}
+        AND t1.authority = #{authority}
+        <if test="authority == 'FAVORITE'">
+            AND t2.status = 'PUBLIC'
+        </if>
+        ;
+    </select>
+
+    <select id="selectByPSetAndUser" resultType="PSets_UsersAuth">
+        SELECT authority
+        FROM psets_users
+        WHERE psetID = #{psetID} AND userID = #{userID};
+    </select>
+</mapper>

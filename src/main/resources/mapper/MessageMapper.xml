@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qingniao.judge.mapper.MessageMapper">
+    <insert id="insert" parameterType="Message">
+        INSERT INTO message(id, sendID, receiveID, sendTime, title, content)
+        VALUES (#{id}, #{sendID}, #{receiveID}, #{sendTime}, #{title}, #{content})
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM message WHERE id = #{id};
+    </delete>
+
+    <select id="selectOne">
+        SELECT * FROM message WHERE id = #{id};
+    </select>
+
+    <select id="selectPublic">
+        SELECT id, sendTime, title, content FROM message
+        WHERE receiveID = 'ALL';
+    </select>
+
+    <select id="selectByRecvUser">
+        SELECT id, sendName, receiveName, sendTime, title, content FROM message
+        WHERE receiveID = #{receiveID};
+    </select>
+
+    <select id="selectBySendUser">
+        SELECT id, sendName, receiveName, sendTime, title, content FROM message
+        WHERE sendID = #{sendID};
+    </select>
+</mapper>
