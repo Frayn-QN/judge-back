@@ -19,25 +19,40 @@
     <update id="update" parameterType="Task">
         UPDATE task
         <set>
-            <if test="status != null">status = #{status}</if>
-            <if test="score != null">score = #{score}</if>
-            <if test="result != null">result = #{result}</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="result != null">result = #{result},</if>
         </set>
         WHERE id = #{id};
     </update>
 
-    <select id="selectOne">
+    <select id="selectOne" resultType="Task">
         SELECT * FROM task WHERE id = #{id};
     </select>
 
-    <select id="selectByUser">
+    <select id="selectByUser" resultType="Task">
         SELECT id, judgeTime, status, score FROM task
         WHERE userID = #{userID}
-        ORDER BY judgeTime DESC;
+        ORDER BY judgeTime DESC
     </select>
     
-    <select id="selectByProblem">
+    <select id="selectByProblem" resultType="Task">
         SELECT id, status, score FROM task
-        WHERE problemID = #{problemID};
+        WHERE problemID = #{problemID}
+    </select>
+
+    <select id="selectDisplayList" resultType="TaskDisplay">
+        SELECT t.id, t.problemID, p.serial, p.name AS problemName, t.judgeTime, t.status, t.score
+        FROM task AS t
+        JOIN problem AS p ON t.problemID = p.id
+        WHERE t.userID = #{userID}
+    </select>
+
+    <select id="selectDisplayOne" resultType="TaskDisplay">
+        SELECT t.id, t.problemID, p.serial, p.name AS problemName, t.judgeTime, t.answer, t.score,
+               t.status, t.result
+        FROM task AS t
+                 JOIN problem AS p ON t.problemID = p.id
+        WHERE t.id = #{id}
     </select>
 </mapper>

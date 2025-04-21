@@ -29,9 +29,10 @@ public class EmailUtil {
         }
 
         SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("fraynqingniao@qq.com");
         message.setTo(email);
-        message.setSubject("青鸟测评系统验证码");
-        message.setText("您的验证码是："+ code+ "；有效期为十分钟。");
+        message.setSubject("QingNiao OJ 验证码");
+        message.setText("您的验证码是： "+ code+ " ；有效期为十分钟。");
         mailSender.send(message);
     }
 
@@ -39,6 +40,8 @@ public class EmailUtil {
         String inputEmail = "verify_"+ email;
         String outputCode = (String) redisAccess.get(inputEmail);
 
+        if(outputCode == null)
+            throw new BusinessException("Email", 400, "验证码不存在");
         if(!code.equals(outputCode.substring(5)))
             throw new BusinessException("Email", 400, "验证码错误");
     }

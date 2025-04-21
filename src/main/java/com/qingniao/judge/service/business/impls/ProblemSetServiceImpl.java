@@ -15,12 +15,15 @@ import com.qingniao.judge.config.entity.BusinessException;
 import com.qingniao.judge.config.entity.ReturnCode;
 import com.qingniao.judge.util.UUIDUtil;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Date;
 import java.util.List;
 
-@Service
+@Service("psetService")
 @AllArgsConstructor
 public class ProblemSetServiceImpl  implements ProblemSetService {
     private ProblemSetMapper psetMapper;
@@ -137,19 +140,30 @@ public class ProblemSetServiceImpl  implements ProblemSetService {
         else // 为空时与收藏有关
             targetID = userID;
 
-        psets_usersMapper.insert(psetID, targetID, authority);
+        try {
+            psets_usersMapper.insert(psetID, targetID, authority);
+        }
+        catch (DuplicateKeyException e) {
+            throw new BusinessException("ProblemSet", 403, "重复添加");
+        }
+
     }
 
     @Override
     public void removeUser(String userID, String psetID, String targetID) {
-        if(targetID != null) {// 为空时与收藏有关
+        if(targetID != null) {
             verify(userID, psetID, PSets_UsersAuth.MANAGE);
             // 当目标为创建者时不生效
             if(psetMapper.selectOne(psetID).getCreatorID().equals(targetID))
-                throw new BusinessException("ProblemSet", ReturnCode.RC_403);
-        }
+                throw new BusinessException("ProblemSet", 403, "不可删除创建者");
 
+
+        }
+        else {// 为空时与收藏有关
+            targetID = userID;
+        }
         psets_usersMapper.deleteByPSetAndUser(psetID, targetID);
+
     }
 
     @Override
@@ -164,13 +178,18 @@ public class ProblemSetServiceImpl  implements ProblemSetService {
     }
 
     @Override
+    public PSets_UsersAuth getUserAuth(String userID, String psetID) {
+        return psets_usersMapper.selectByPSetAndUser(psetID, userID);
+    }
+
+    @Override
     public void clearByUser(String userID) {
         List<String> psetIDList = psetMapper.selectByUser(userID);
         psetIDList.forEach(id -> {// 删除用户创建的题集
             this.deletePSet(userID, id);
         });
 
-        // 删除与用户有关的题集
+        // 删除与用户有关的题集关系记录
         psets_usersMapper.deleteByUser(userID);
     }
 

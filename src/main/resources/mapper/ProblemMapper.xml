@@ -4,10 +4,10 @@
 
 <mapper namespace="com.qingniao.judge.mapper.ProblemMapper">
     <insert id="insert" parameterType="Problem">
-        INSERT INTO problem(id, creatorID, createTime, name, level, content,
-                            example, expectation, extra, timeLimit, memoryLimit)
-        VALUES (#{id}, #{creatorID}, #{createTime}, #{name}, #{level}, #{content},
-                #{example}, #{expectation}, #{extra}, #{timeLimit}, #{memoryLimit})
+        INSERT INTO problem(id, creatorID, createTime, name, level, content, example,
+                            expectation, extra, timeLimit, memoryLimit, testCount, language)
+        VALUES (#{id}, #{creatorID}, #{createTime}, #{name}, #{level}, #{content}, #{example},
+            #{expectation}, #{extra}, #{timeLimit}, #{memoryLimit}, #{testCount}, #{language})
     </insert>
 
     <delete id="delete">
@@ -17,42 +17,42 @@
     <update id="update" parameterType="Problem">
         UPDATE problem
         <set>
-            <if test="name != null">name = #{name}</if>
-            <if test="level != null">level = #{level}</if>
-            <if test="content != null">content = #{content}</if>
-            <if test="example != null">example = #{example}</if>
-            <if test="expectation != null">expectation = #{expectation}</if>
-            <if test="extra != null">extra = #{extra}</if>
-            <if test="timeLimit != null">timeLimit = #{timeLimit}</if>
-            <if test="memoryLimit != null">memoryLimit = #{memoryLimit}</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="level != null">level = #{level},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="example != null">example = #{example},</if>
+            <if test="expectation != null">expectation = #{expectation},</if>
+            <if test="extra != null">extra = #{extra},</if>
+            <if test="timeLimit != null">timeLimit = #{timeLimit},</if>
+            <if test="memoryLimit != null">memoryLimit = #{memoryLimit},</if>
         </set>
         WHERE id = #{id};
     </update>
 
     <select id="selectOne" resultType="Problem">
-        SELECT * FROM problem WHERE id = #{id};
+        SELECT * FROM problem WHERE id = #{id}
     </select>
     
     <select id="selectList" resultType="Problem">
-        SELECT id, name, serial, level FROM problem;
+        SELECT id, name, serial, level FROM problem
     </select>
 
     <select id="selectByUser" resultType="Problem">
         SELECT id, name, serial, level FROM problem
-        WHERE creatorID = #{creatorID};
+        WHERE creatorID = #{creatorID}
     </select>
 
     <select id="selectDisplay" resultType="Problem">
-        SELECT id, serial, createTime, name, level, content FROM problem;
+        SELECT id, serial, createTime, name, level, content, language, timeLimit, memoryLimit FROM problem
     </select>
     
     <select id="selectJudge" resultType="Problem">
-        SELECT id, example, expectation, extra, timeLimit, memoryLimit FROM problem;
+        SELECT id, example, expectation, extra, timeLimit, memoryLimit FROM problem
     </select>
 
     <select id="selectByKeyword" resultType="Problem">
         SELECT id, name, serial, level FROM problem
         WHERE serial LIKE CONCAT('%', #{keyword}, '%')
-        OR name LIKE CONCAT('%', #{keyword}, '%');
+        OR name LIKE CONCAT('%', #{keyword}, '%')
     </select>
 </mapper>

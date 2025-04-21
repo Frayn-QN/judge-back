@@ -9,5 +9,4 @@ class JudgeApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }

@@ -4,8 +4,8 @@
 
 <mapper namespace="com.qingniao.judge.mapper.MessageMapper">
     <insert id="insert" parameterType="Message">
-        INSERT INTO message(id, sendID, receiveID, sendTime, title, content)
-        VALUES (#{id}, #{sendID}, #{receiveID}, #{sendTime}, #{title}, #{content})
+        INSERT INTO message(id, sendID, receiveID, sendTime, title, content, sendName, receiveName)
+        VALUES (#{id}, #{sendID}, #{receiveID}, #{sendTime}, #{title}, #{content}, #{sendName}, #{receiveName})
     </insert>
 
     <delete id="delete">
@@ -13,21 +13,22 @@
     </delete>
 
     <select id="selectOne">
-        SELECT * FROM message WHERE id = #{id};
+        SELECT * FROM message WHERE id = #{id}
     </select>
 
     <select id="selectPublic">
         SELECT id, sendTime, title, content FROM message
-        WHERE receiveID = 'ALL';
+        WHERE receiveID = 'ALL'
+        ORDER BY sendTime DESC
     </select>
 
     <select id="selectByRecvUser">
         SELECT id, sendName, receiveName, sendTime, title, content FROM message
-        WHERE receiveID = #{receiveID};
+        WHERE receiveID = #{receiveID}
     </select>
 
     <select id="selectBySendUser">
         SELECT id, sendName, receiveName, sendTime, title, content FROM message
-        WHERE sendID = #{sendID};
+        WHERE sendID = #{sendID}
     </select>
 </mapper>

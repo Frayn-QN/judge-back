@@ -12,6 +12,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+
 @RestController
 @RequestMapping("/user")
 @AllArgsConstructor
@@ -26,9 +28,12 @@ public class UserController {
     }
 
     @GetMapping("/getInfo")
-    User getInfo(HttpServletRequest request) {
-        String userID = redisService.queryUserID(request);
-        return userService.getInfo(userID);
+    User getInfo(HttpServletRequest request, @RequestParam(required = false) String id) {
+        if(id == null) {
+            String userID = redisService.queryUserID(request);
+            return userService.getInfo(userID);
+        }
+        return userService.getInfo(id);
     }
 
     @PostMapping("/changeInfo")
@@ -37,10 +42,10 @@ public class UserController {
         userService.changeInfo(user);
     }
 
-    @GetMapping("/unregister")
+    @PostMapping("/unregister")
     void unregister(HttpServletRequest request, @RequestBody JsonNode body) {
-        String email = body.get("email").toString();
-        String code = body.get("code").toString();
+        String email = body.get("email").asText();
+        String code = body.get("code").asText();
 
         emailUtil.verify(email, code);
         String userID = redisService.queryUserID(request);
@@ -64,11 +69,19 @@ public class UserController {
     @PostMapping("/ban")
     void banUser(HttpServletRequest request, @RequestBody JsonNode body) {
         String userID = redisService.queryUserID(request);
-        String targetID = body.get("targetID").toString();
+        String targetID = body.get("targetID").asText();
         userService.verifyAdmin(userID, targetID);
 
-        String banTimeStr = body.get("ban_time").toString();
+        String banTimeStr = body.get("banTime").asText();
         redisService.banUser(targetID, BanTime.fromDescription(banTimeStr));
+    }
+
+    @GetMapping("/ban")
+    Date getBanTime(HttpServletRequest request, @RequestParam String id) {
+        String userID = redisService.queryUserID(request);
+        userService.verifyAdmin(userID, id);
+
+        return  redisService.getBanTime(id);
     }
 
     @GetMapping("/load")

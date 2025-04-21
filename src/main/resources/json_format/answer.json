@@ -1,4 +1,6 @@
 {
   "language": "codeLanguage",
-  "code": "codeText"
+  "code": "codeText",
+  "judge": false,
+  "input": "input"
 }

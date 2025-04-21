@@ -39,7 +39,7 @@ public class MessageServiceImpl implements MessageService {
         message.setSendID(userID);
 
         if(message.getReceiveID() == null) {// 为空表示不为全体消息
-            String username = message.getReceiveUsername();
+            String username = message.getReceiveName();
             message.setReceiveID(userMapper.selectByUsername(username));
         }
 

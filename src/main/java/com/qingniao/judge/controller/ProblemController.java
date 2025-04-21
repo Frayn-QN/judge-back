@@ -38,6 +38,12 @@ public class ProblemController {
         return problemService.getProblem(id);
     }
 
+    @GetMapping("/detail")
+    Problem getDetail(HttpServletRequest request, @RequestParam String id) {
+        String userID = redisService.queryUserID(request);
+        return problemService.getProblemDetail(userID, id);
+    }
+
     @GetMapping("/load")
     PageInfo<Problem> load(@RequestParam int pageNum, @RequestParam int pageSize) {
         return problemService.loadProblem(pageNum, pageSize);

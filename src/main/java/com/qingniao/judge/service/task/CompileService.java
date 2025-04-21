@@ -1,4 +1,4 @@
-package com.qingniao.judge.service.compile;
+package com.qingniao.judge.service.task;
 
 import com.qingniao.judge.entity.Problem;
 import com.qingniao.judge.entity.Task;
@@ -6,7 +6,7 @@ import com.qingniao.judge.enums.TaskStatus;
 import com.qingniao.judge.entity.TaskData;
 import com.qingniao.judge.mapper.ProblemMapper;
 import com.qingniao.judge.mapper.TaskMapper;
-import com.qingniao.judge.service.execute.ExecuteService;
+import com.qingniao.judge.service.task.ExecuteService;
 import lombok.AllArgsConstructor;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

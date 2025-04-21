@@ -1,4 +1,4 @@
-package com.qingniao.judge.service.execute;
+package com.qingniao.judge.service.task;
 
 import com.qingniao.judge.entity.Problem;
 import com.qingniao.judge.entity.Task;

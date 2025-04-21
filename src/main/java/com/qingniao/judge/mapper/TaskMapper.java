@@ -1,6 +1,7 @@
 package com.qingniao.judge.mapper;
 
 import com.qingniao.judge.entity.Task;
+import com.qingniao.judge.entity.TaskDisplay;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -14,4 +15,6 @@ public interface TaskMapper {
     Task selectOne(String id);
     List<Task> selectByUser(String userID);
     List<Task> selectByProblem(String problemID);
+    List<Task> selectDisplayList(String userID);
+    TaskDisplay selectDisplayOne(String userID);
 }

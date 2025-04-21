@@ -11,12 +11,15 @@ import com.qingniao.judge.service.business.AccountService;
 import com.qingniao.judge.service.business.ProblemSetService;
 import com.qingniao.judge.service.redis.RedisService;
 import com.qingniao.judge.util.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Base64;
 import java.util.Date;
+import java.util.Objects;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -24,7 +27,6 @@ public class AccountServiceImpl implements AccountService {
     private RedisService redisService;
     private PasswordUtil passwordUtil;
     private ProblemSetService psetService;
-    private EmailUtil emailUtil;
 
     @Autowired
     public AccountServiceImpl(UserMapper userMapper, RedisService redisService, PasswordUtil passwordUtil,
@@ -36,24 +38,32 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Value("${judge.default-avatar-base64}")
-    private static String defaultAvatarBase64Str;
+    private String defaultAvatarBase64Str;
 
     @Override
+    @Transactional
     public String login(String email, String password, boolean remember) {
         User user = userMapper.selectByEmail(email);
 
+        if(user == null)// 用户不存在
+            throw new BusinessException("Account", 403, "用户不存在");
+
         if(!isPasswordCorrect(user, password))// 密码错误
-            throw new BusinessException("Account", ReturnCode.RC_401);
+            throw new BusinessException("Account", 403, "密码错误");
 
         Date banTime = redisService.getBanTime(email);
         if(banTime != null)// 用户被封禁
-            throw new BusinessException("Account", 403, banTime.toString());
+            throw new BusinessException("Account", 403, "封禁时间："+ banTime.toString());
 
         return redisService.setToken(user.getId(), remember);
     }
 
     @Override
     public void register(User user) {
+        // 检验特殊字段
+        if(Objects.equals(user.getUsername(), "ALL"))
+            throw new BusinessException("Account", 403, "用户名使用特殊字段");
+
         user.setId(UUIDUtil.generateUUIDStr());
         user.setRegisterTime(new Date());
         user.setAuthority(UserAuth.USER);

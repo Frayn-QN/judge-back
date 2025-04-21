@@ -9,7 +9,8 @@ public class Message {
     private String id;
     private String sendID;
     private String receiveID;
-    private String receiveUsername;
+    private String sendName;
+    private String receiveName;
     private Date sendTime;
     private String title;
     private String content;

@@ -10,6 +10,7 @@ import com.qingniao.judge.service.business.ProblemSetService;
 import com.qingniao.judge.service.redis.RedisService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -50,6 +51,12 @@ public class ProblemSetController {
                                         @RequestParam int pageNum, @RequestParam int pageSize) {
         String userID = redisService.queryUserID(request);
         return psetService.loadPSetProblems(userID, id, pageNum, pageSize);
+    }
+
+    @GetMapping("/auth")
+    PSets_UsersAuth getAuthority(HttpServletRequest request, @RequestParam String id) {
+        String userID = redisService.queryUserID(request);
+        return psetService.getUserAuth(userID, id);
     }
 
     @GetMapping("/load")
@@ -109,7 +116,7 @@ public class ProblemSetController {
     @PostMapping("/favorite")
     void favorite(HttpServletRequest request, @RequestBody JsonNode body) {
         String userID = redisService.queryUserID(request);
-        String psetID = body.get("psetID").toString();
+        String psetID = body.get("psetID").asText();
         boolean flag = body.get("flag").asBoolean();
 
         if(flag) // 收藏
@@ -119,12 +126,14 @@ public class ProblemSetController {
     }
 
 
+    @Data
     private static class PSet_User {
         private String psetID;
         private String targetID;
         private PSets_UsersAuth authority;
     }
 
+    @Data
     private static class PSet_Problem {
         private String psetID;
         private String problemID;

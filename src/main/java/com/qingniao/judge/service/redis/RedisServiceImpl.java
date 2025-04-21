@@ -20,9 +20,12 @@ public class RedisServiceImpl implements RedisService {
     public String queryUserID(HttpServletRequest request) {
         String token = TokenUtil.extractToken(request);
         String inputToken = "token_"+ token;
-        String userID = (String) redisAccess.get(inputToken);
-        if(userID == null || this.getBanTime(userID) != null)// 用户被封禁
+        String outputId = (String) redisAccess.get(inputToken);
+        if(outputId == null)
             throw new BusinessException("Redis", ReturnCode.RC_401);
+        String userID = outputId.substring(7); // userID_xxx
+        if(this.getBanTime(userID) != null)
+            throw new BusinessException("Redis", 401, "用户被封禁");
 
         return userID;
     }

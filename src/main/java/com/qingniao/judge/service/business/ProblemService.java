@@ -8,6 +8,7 @@ public interface ProblemService {
     void modifyProblem(String userID, Problem problem);
     void deleteProblem(String userID, String problemID);
     Problem getProblem(String problemID);
+    Problem getProblemDetail(String userID, String problemID);
     PageInfo<Problem> loadProblem(int pageNum, int pageSize);
     PageInfo<Problem> loadUploaded(String userID, int pageNum, int pageSize);
     PageInfo<Problem> searchProblem(String keyword, int pageNum, int pageSize);

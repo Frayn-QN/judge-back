@@ -29,8 +29,8 @@ public class ProblemServiceImpl implements ProblemService {
         switch (auth) {
             case USER -> throw new BusinessException("Problem", ReturnCode.RC_403);
             case COACH -> {
-                // 检查是否为创建者
                 if(problemID == null)return;
+                // 检查是否为创建者
                 Problem problem = problemMapper.selectOne(problemID);
                 if(!problem.getCreatorID().equals(userID))
                     throw new BusinessException("Problem", ReturnCode.RC_403);
@@ -45,6 +45,9 @@ public class ProblemServiceImpl implements ProblemService {
         problem.setId(UUIDUtil.generateUUIDStr());
         problem.setCreatorID(userID);
         problem.setCreateTime(new Date());
+
+        // TODO: 执行一次评测验证题目
+
         problemMapper.insert(problem);
     }
 
@@ -65,8 +68,15 @@ public class ProblemServiceImpl implements ProblemService {
 
     @Override
     public Problem getProblem(String problemID) {
-        // 所有人都能获取，用作前端显示
+        // 所有人都能获取，用作题目详情展示
         return problemMapper.selectDisplay(problemID);
+    }
+
+    @Override
+    public Problem getProblemDetail(String userID, String problemID) {
+        verify(userID, problemID);
+
+        return problemMapper.selectOne(problemID);
     }
 
     @Override
@@ -77,10 +87,19 @@ public class ProblemServiceImpl implements ProblemService {
 
     @Override
     public PageInfo<Problem> loadUploaded(String userID, int pageNum, int pageSize) {
-        verify(userID, null);
-
-        PageHelper.startPage(pageNum, pageSize);
-        return new PageInfo<>(problemMapper.selectByUser(userID));
+        UserAuth auth = userMapper.selectAuthority(userID);
+        switch (auth) {
+            case USER -> throw new BusinessException("Problem", ReturnCode.RC_403);
+            case COACH -> {
+                PageHelper.startPage(pageNum, pageSize);
+                return new PageInfo<>(problemMapper.selectByUser(userID));
+            }
+            case ADMIN -> {
+                PageHelper.startPage(pageNum, pageSize);
+                return new PageInfo<>(problemMapper.selectList());
+            }
+        }
+        return null;
     }
 
     @Override

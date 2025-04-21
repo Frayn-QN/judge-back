@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.Cipher;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 @Component
@@ -36,6 +37,28 @@ public class PasswordUtil {
         redisAccess.set("private_key", privateKeyStr);
     }
 
+    public String encryptWithPublic(String plainText) {
+        try {
+            PublicKey publicKey = getPublicKey();
+            Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            byte[] encryptedBytes = cipher.doFinal(plainText.getBytes());
+            return Base64.getEncoder().encodeToString(encryptedBytes);
+        } catch (Exception e) {
+            throw new BusinessException("Encryption failed", e);
+        }
+    }
+
+    private PublicKey getPublicKey() throws Exception {
+        String publicKeyStr = (String) redisAccess.get("public_key");
+        if (publicKeyStr == null) {
+            throw new IllegalStateException("Public key not found in Redis");
+        }
+        byte[] publicKeyBytes = Base64.getDecoder().decode(publicKeyStr);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        return keyFactory.generatePublic(new X509EncodedKeySpec(publicKeyBytes));
+    }
+
     public String getPublicKeyStr() {
         return (String) redisAccess.get("public_key");
     }
@@ -47,7 +70,8 @@ public class PasswordUtil {
         return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(privateKeyBytes));
     }
 
-    private String decryptWithPrivate(String encryptText) throws Exception{// 私钥解密
+    private String decryptWithPrivate(String encryptText) throws Exception{
+        // 私钥解密
         Cipher cipher = Cipher.getInstance("RSA");
         PrivateKey privateKey = this.getPrivateKey();
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
@@ -57,7 +81,7 @@ public class PasswordUtil {
 
 
 
-    private String hashPassword(String password) throws Exception{
+    public String hashPassword(String password) throws Exception{
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] encodedHash = digest.digest(password.getBytes());
         return Base64.getEncoder().encodeToString(encodedHash);

@@ -15,34 +15,34 @@
     <update id="update" parameterType="ProblemSet">
         UPDATE problemset
         <set>
-            <if test="name != null">name = #{name}</if>
-            <if test="introduction != null">introduction = #{introduction}</if>
-            <if test="updateTime != null">updateTime = #{updateTime}</if>
-            <if test="status != null">status = #{status}</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="introduction != null">introduction = #{introduction},</if>
+            <if test="updateTime != null">updateTime = #{updateTime},</if>
+            <if test="status != null">status = #{status},</if>
         </set>
         WHERE id = #{id};
     </update>
 
-    <select id="selectOne">
-        SELECT * FROM problemset WHERE id = #{id};
+    <select id="selectOne" resultType="ProblemSet">
+        SELECT * FROM problemset WHERE id = #{id}
     </select>
 
-    <select id="selectList">
+    <select id="selectList" resultType="ProblemSet">
         SELECT id, name, introduction, createTime, updateTime FROM problemset
-        WHERE status = 'PUBLIC';
+        WHERE status = 'PUBLIC'
     </select>
 
     <select id="selectStatus" resultType="PSetStatus">
-        SELECT status FROM problemset WHERE id = #{id};
+        SELECT status FROM problemset WHERE id = #{id}
     </select>
 
-    <select id="selectByUser">
-        SELECT id FROM problemset WHERE creatorID = #{creatorID};
+    <select id="selectByUser" resultType="ProblemSet">
+        SELECT id FROM problemset WHERE creatorID = #{creatorID}
     </select>
 
     <select id="selectByKeyword" resultType="ProblemSet">
         SELECT id, name, introduction, createTime, updateTime FROM problemset
         WHERE status = 'PUBLIC'
-        AND name LIKE CONCAT('%', #{keyword}, '%');
+        AND name LIKE CONCAT('%', #{keyword}, '%')
     </select>
 </mapper>

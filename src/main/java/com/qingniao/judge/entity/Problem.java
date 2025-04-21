@@ -20,4 +20,6 @@ public class Problem {
     private JsonNode extra;
     private Integer timeLimit;
     private Integer memoryLimit;
+    private Integer testCount;
+    private JsonNode language;
 }

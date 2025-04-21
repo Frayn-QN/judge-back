@@ -3,12 +3,13 @@ package com.qingniao.judge.service.business.impls;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.qingniao.judge.entity.Task;
+import com.qingniao.judge.entity.TaskDisplay;
 import com.qingniao.judge.enums.TaskStatus;
 import com.qingniao.judge.mapper.ProblemMapper;
 import com.qingniao.judge.mapper.TaskMapper;
 import com.qingniao.judge.mapper.UserMapper;
 import com.qingniao.judge.service.business.TaskService;
-import com.qingniao.judge.service.compile.CompileService;
+import com.qingniao.judge.service.task.CompileService;
 import com.qingniao.judge.config.entity.BusinessException;
 import com.qingniao.judge.config.entity.ReturnCode;
 import com.qingniao.judge.util.UUIDUtil;
@@ -41,8 +42,7 @@ public class TaskServiceImpl implements TaskService {
         task.setStatus(TaskStatus.COMPILING);
 
         taskMapper.insert(task);
-        // 异步实现执行任务
-        compileService.generateTaskData(task);
+        // TODO: 异步执行任务
 
         return task.getId();
     }
@@ -55,10 +55,10 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task getTask(String userID, String taskID) {
+    public TaskDisplay getTask(String userID, String taskID) {
         verify(userID, taskID);
 
-        return taskMapper.selectOne(taskID);
+        return taskMapper.selectDisplayOne(taskID);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class TaskServiceImpl implements TaskService {
         Map<String, Object> resultMap = new HashMap<>();
 
         int count_AC = 0, count_WA = 0, count_ERR = 0, count_total = 0;
-        float scoreSum = 0;
+        float scoreSum = 0, scoreAverage = 0;
         for (Task task : taskList) {
             switch (task.getStatus()) {
                 case AC -> count_AC++;
@@ -78,7 +78,8 @@ public class TaskServiceImpl implements TaskService {
             count_total++;
             scoreSum += task.getScore();
         }
-        float scoreAverage = scoreSum / count_total;
+
+        if(count_total != 0) scoreAverage = scoreSum / count_total;
 
         resultMap.put("total", count_total);
         resultMap.put("average", scoreAverage);
@@ -95,7 +96,7 @@ public class TaskServiceImpl implements TaskService {
         Map<String, Object> resultMap = new HashMap<>();
 
         int count_AC = 0, count_WA = 0, count_ERR = 0, count_total = 0;
-        float scoreSum = 0;
+        float scoreSum = 0, scoreAverage = 0;
         for (Task task : taskList) {
             switch (task.getStatus()) {
                 case AC -> count_AC++;
@@ -106,7 +107,7 @@ public class TaskServiceImpl implements TaskService {
             count_total++;
             scoreSum += task.getScore();
         }
-        float scoreAverage = scoreSum / count_total;
+        if(count_total != 0) scoreAverage = scoreSum / count_total;
 
         resultMap.put("total", count_total);
         resultMap.put("average", scoreAverage);
@@ -120,6 +121,6 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public PageInfo<Task> loadByUser(String userID, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        return new PageInfo<>(taskMapper.selectByUser(userID));
+        return new PageInfo<>(taskMapper.selectDisplayList(userID));
     }
 }

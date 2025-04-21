@@ -1,5 +1,4 @@
-package com.qingniao.judge.config;
-
+package com.qingniao.judge.config.interceptor;
 
 import com.qingniao.judge.service.redis.RedisServiceImpl;
 import com.qingniao.judge.config.entity.BusinessException;
@@ -22,7 +21,6 @@ public class AccessInterceptor implements HandlerInterceptor {// 拦截器
 
         String token = TokenUtil.extractToken(request);
         if(!redisService.hasToken(token)) {
-//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);// 401
             throw new BusinessException("Interceptor", ReturnCode.RC_401);
         }
 

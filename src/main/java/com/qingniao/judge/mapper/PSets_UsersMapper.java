@@ -35,7 +35,7 @@ public interface PSets_UsersMapper {
      * 获取题目集内某用户的权限
      * @param psetID
      * @param userID
-     * @return 题集权限列表（可能不止一个）
+     * @return 题集权限列表
      */
     PSets_UsersAuth selectByPSetAndUser(String psetID, String userID);
 }

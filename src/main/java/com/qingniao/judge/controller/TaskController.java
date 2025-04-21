@@ -2,6 +2,7 @@ package com.qingniao.judge.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.qingniao.judge.entity.Task;
+import com.qingniao.judge.entity.TaskDisplay;
 import com.qingniao.judge.service.business.TaskService;
 import com.qingniao.judge.service.redis.RedisService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,9 +19,9 @@ public class TaskController {
     private RedisService redisService;
 
     @PostMapping("/add")
-    void add(HttpServletRequest request, @RequestBody Task task) {
+    String add(HttpServletRequest request, @RequestBody Task task) {
         String userID = redisService.queryUserID(request);
-        taskService.addTask(userID, task);
+        return taskService.addTask(userID, task);
     }
 
     @GetMapping("/delete")
@@ -30,7 +31,7 @@ public class TaskController {
     }
 
     @GetMapping("/get")
-    Task get(HttpServletRequest request, @RequestParam String id) {
+    TaskDisplay get(HttpServletRequest request, @RequestParam String id) {
         String userID = redisService.queryUserID(request);
         return taskService.getTask(userID, id);
     }

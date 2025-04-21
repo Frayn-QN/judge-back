@@ -1,0 +1,107 @@
+package com.qingniao.judge.config;
+
+import com.qingniao.judge.entity.ProblemSet;
+import com.qingniao.judge.entity.User;
+import com.qingniao.judge.enums.PSetStatus;
+import com.qingniao.judge.enums.UserAuth;
+import com.qingniao.judge.mapper.UserMapper;
+import com.qingniao.judge.service.business.ProblemSetService;
+import com.qingniao.judge.util.PasswordUtil;
+import com.qingniao.judge.util.UUIDUtil;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.stereotype.Component;
+
+import java.util.Base64;
+import java.util.Date;
+
+@Component
+public class UserInitializer {
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private PasswordUtil passwordUtil;
+
+    @Autowired
+    private ProblemSetService psetService;
+
+    // robot.png
+    @Value("${judge.default-avatar-base64}")
+    private String defaultAvatarBase64Str;
+
+    @PostConstruct
+    public void adminInit() throws Exception {
+        if(userMapper.selectByUsername("Admin") != null) return;
+
+        User user = new User();
+        user.setId(UUIDUtil.generateUUIDStr());
+        user.setEmail("admin@qingniaooj.com");
+        user.setAuthority(UserAuth.ADMIN);
+        user.setUsername("Admin");
+        user.setPassword(passwordUtil.hashPassword("adminadmin"));
+        // bird.png
+        user.setAvatar(Base64.getDecoder().decode("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"));
+        user.setIntroduction("Administrator of QingNiaoOJ");
+        user.setRegisterTime(new Date());
+
+        userMapper.insert(user);
+
+        // 创建默认题集（收藏夹）
+        ProblemSet problemSet = new ProblemSet();
+        problemSet.setName(user.getUsername()+ "的收藏夹");
+        problemSet.setStatus(PSetStatus.PRIVATE);
+        problemSet.setIntroduction(user.getUsername()+ "收藏题目");
+        psetService.addPSet(user.getId(), problemSet);
+    }
+
+    @PostConstruct
+    public void coachInit() throws Exception{
+        if(userMapper.selectByUsername("QingNiaoCoach") != null) return;
+
+        User user = new User();
+        user.setId(UUIDUtil.generateUUIDStr());
+        user.setEmail("fraynqingniao@163.com");
+        user.setAuthority(UserAuth.COACH);
+        user.setUsername("QingNiaoCoach");
+        user.setPassword(passwordUtil.hashPassword("123456789"));
+        user.setAvatar(Base64.getDecoder().decode(defaultAvatarBase64Str));
+        user.setIntroduction("A Coach of QingNiaoOJ");
+        user.setRegisterTime(new Date());
+
+        userMapper.insert(user);
+
+        // 创建默认题集（收藏夹）
+        ProblemSet problemSet = new ProblemSet();
+        problemSet.setName(user.getUsername()+ "的收藏夹");
+        problemSet.setStatus(PSetStatus.PRIVATE);
+        problemSet.setIntroduction(user.getUsername()+ "收藏题目");
+        psetService.addPSet(user.getId(), problemSet);
+    }
+
+    @PostConstruct
+    public void userInit() throws Exception{
+        if(userMapper.selectByUsername("SudoSatou") != null) return;
+
+        User user = new User();
+        user.setId(UUIDUtil.generateUUIDStr());
+        user.setEmail("sudosatou@qq.com");
+        user.setAuthority(UserAuth.USER);
+        user.setUsername("SudoSatou");
+        user.setPassword(passwordUtil.hashPassword("123456789"));
+        user.setAvatar(Base64.getDecoder().decode(defaultAvatarBase64Str));
+        user.setIntroduction("毕业快乐");
+        user.setRegisterTime(new Date());
+
+        userMapper.insert(user);
+
+        // 创建默认题集（收藏夹）
+        ProblemSet problemSet = new ProblemSet();
+        problemSet.setName(user.getUsername()+ "的收藏夹");
+        problemSet.setStatus(PSetStatus.PRIVATE);
+        problemSet.setIntroduction(user.getUsername()+ "收藏题目");
+        psetService.addPSet(user.getId(), problemSet);
+    }
+}

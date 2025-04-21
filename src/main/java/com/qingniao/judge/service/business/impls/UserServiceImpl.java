@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.qingniao.judge.config.entity.BusinessException;
 import com.qingniao.judge.config.entity.ReturnCode;
+
 import com.qingniao.judge.entity.User;
 import com.qingniao.judge.enums.UserAuth;
 import com.qingniao.judge.mapper.TaskMapper;
@@ -23,11 +24,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getInfo(String userID) {
-        User user = userMapper.selectOne(userID);
 
-        // 清除信息
-        user.setPassword(null);
-        return user;
+        return userMapper.selectOne(userID);
     }
 
     @Override
@@ -61,8 +59,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void verifyAdmin(String userID, String targetID) {
         // 只允许admin改非admin
-        if(!userMapper.selectAuthority(userID).equals(UserAuth.ADMIN)
-                || userMapper.selectAuthority(targetID).equals(UserAuth.ADMIN))
-            throw new BusinessException("User", ReturnCode.RC_403);
+        if(!userMapper.selectAuthority(userID).equals(UserAuth.ADMIN))
+            throw new BusinessException("User", 403, "权限不足");
+        if(userMapper.selectAuthority(targetID).equals(UserAuth.ADMIN))
+            throw new BusinessException("User", 403, "不允许操作管理员");
     }
 }

@@ -5,7 +5,6 @@ import com.qingniao.judge.entity.User;
 import com.qingniao.judge.service.business.AccountService;
 import com.qingniao.judge.util.EmailUtil;
 import com.qingniao.judge.util.PasswordUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +18,8 @@ public class AccountController {
 
     @PostMapping("/login")
     String login(@RequestBody JsonNode body) {
-        String email = body.get("email").toString();
-        String password = body.get("password").toString();
+        String email = body.get("email").asText();
+        String password = body.get("password").asText();
         boolean remember = body.get("remember").asBoolean();
 
         return accountService.login(email, password, remember);

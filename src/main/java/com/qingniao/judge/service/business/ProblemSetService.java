@@ -22,6 +22,7 @@ public interface ProblemSetService {
     void joinUser(String userID, String psetID, String targetID, PSets_UsersAuth authority);
     void removeUser(String userID, String psetID, String targetID);
     void changeUserAuth(String userID, String psetID, String targetID, PSets_UsersAuth newAuth);
+    PSets_UsersAuth getUserAuth(String userID, String psetID);
     void clearByUser(String userID);
     PageInfo<ProblemSet> searchPSet(String keyword, int pageNum, int pageSize);
 }

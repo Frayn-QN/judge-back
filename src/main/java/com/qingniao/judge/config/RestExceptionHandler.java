@@ -26,7 +26,7 @@ public class RestExceptionHandler {
     @ExceptionHandler(NullPointerException.class)
     public Result<String> nullPointerException(NullPointerException e) {
         log.error("NullPointerException: ", e);
-        return Result.failure(ReturnCode.RC_400.getCode(), ReturnCode.RC_400.getMsg());
+        return Result.failure(ReturnCode.RC_400.getCode(), "NullPrt Error");
     }
 
     // 调用不存在的接口 404
