@@ -1,0 +1,79 @@
+{
+    "task": {
+        "id": "taskID",
+        "problemID": "problemID",
+        "userID": "userID",
+        "judgeTime": "judgeTimeStr",
+        "answer": {
+            "language": "languageStr",
+            "code": "codeStr",
+            "judge": true,
+            "input": "userInput, while judge=false"
+        },
+        "status": "statusStr",
+        "score": "scoreFloat",
+        "result_complie": [
+            {
+                "_file_name_0": "Base64Str"
+            },
+            {
+                "_file_name_1": "Base64Str"
+            },
+            {
+                "_file_name_2": "Base64Str"
+            }
+        ],
+        "result_execute": {
+            "total": "testCount",
+            "accept": "acceptNumber",
+            "wrong": "wrongNumber"
+        },
+        "result_failure": {
+            "msg": "msgStr"
+        }
+    },
+    "extra": [
+        {
+            "_file_name_0": "Base64Str"
+        },
+        {
+            "_file_name_1": "Base64Str"
+        }
+    ],
+    "example": [
+        {
+            "_file_name_0": "Base64Str"
+        },
+        {
+            "_file_name_1": "Base64Str"
+        },
+        {
+            "_file_name_2": "Base64Str"
+        }
+    ],
+    "expectation": [
+        {
+            "_file_name_0": "Base64Str"
+        },
+        {
+            "_file_name_1": "Base64Str"
+        },
+        {
+            "_file_name_2": "Base64Str"
+        }
+    ],
+    "execute": [
+        {
+            "_file_name_0": "Base64Str"
+        },
+        {
+            "_file_name_1": "Base64Str"
+        },
+        {
+            "_file_name_2": "Base64Str"
+        }
+    ],
+    "testCount": "countInt",
+    "timeLimit": "msInt",
+    "memoryLimit": "MBInt"
+}

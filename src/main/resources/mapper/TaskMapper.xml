@@ -46,6 +46,7 @@
         FROM task AS t
         JOIN problem AS p ON t.problemID = p.id
         WHERE t.userID = #{userID}
+        ORDER BY t.judgeTime DESC
     </select>
 
     <select id="selectDisplayOne" resultType="TaskDisplay">

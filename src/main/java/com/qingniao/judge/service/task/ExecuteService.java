@@ -17,33 +17,38 @@ import org.springframework.stereotype.Service;
 public class ExecuteService {
     private TaskMapper taskMapper;
     private ProblemMapper problemMapper;
-
     private Queue ExecuteQueueInput;
     private RabbitTemplate rabbitTemplate;
+    private WebSocketService webSocketService;
 
     @Async
-    public void dealTaskData(Task task) {
+    public void dealAndPushTaskData(Task task) {
         TaskData taskData = new TaskData();
-        Problem problem = problemMapper.selectJudge(taskData.getTask().getProblemID());
+        Problem problem = problemMapper.selectJudge(task.getProblemID());
+
+        taskData.setExecute(task.getResult());
+        task.setResult(null);
 
         taskData.setTask(task);
         taskData.setExample(problem.getExample());
         taskData.setExpectation(problem.getExpectation());
         taskData.setTimeLimit(problem.getTimeLimit());
         taskData.setMemoryLimit(problem.getMemoryLimit());
+        taskData.setTestCount(problem.getTestCount());
 
-        this.pushTask(taskData);
-    }
-
-    private void pushTask(TaskData taskData) {
         rabbitTemplate.convertAndSend(ExecuteQueueInput.getName(), taskData);
     }
 
     @RabbitListener(queues = "ExecuteQueueOutput")
-    private void pullTask(TaskData taskData) {
+    public void pullTask(TaskData taskData) {
         Task task = taskData.getTask();
-        taskMapper.update(task);
-        //TODO websocket向前端同步执行结果
+        if(isJudge(task)) taskMapper.update(task);
+        // websocket向前端同步task
+        webSocketService.sendTask(task);
+    }
 
+    private boolean isJudge(Task task) {
+        if(task.getAnswer().get("judge") == null) return false;
+        return task.getAnswer().get("judge").asBoolean();
     }
 }

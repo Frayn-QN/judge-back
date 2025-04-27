@@ -47,7 +47,7 @@
     </select>
     
     <select id="selectJudge" resultType="Problem">
-        SELECT id, example, expectation, extra, timeLimit, memoryLimit FROM problem
+        SELECT id, example, expectation, extra, timeLimit, memoryLimit, testCount FROM problem
     </select>
 
     <select id="selectByKeyword" resultType="Problem">

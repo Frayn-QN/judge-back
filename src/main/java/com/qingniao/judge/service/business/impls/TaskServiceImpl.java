@@ -5,9 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.qingniao.judge.entity.Task;
 import com.qingniao.judge.entity.TaskDisplay;
 import com.qingniao.judge.enums.TaskStatus;
-import com.qingniao.judge.mapper.ProblemMapper;
 import com.qingniao.judge.mapper.TaskMapper;
-import com.qingniao.judge.mapper.UserMapper;
 import com.qingniao.judge.service.business.TaskService;
 import com.qingniao.judge.service.task.CompileService;
 import com.qingniao.judge.config.entity.BusinessException;
@@ -22,8 +20,6 @@ import java.util.*;
 @AllArgsConstructor
 public class TaskServiceImpl implements TaskService {
     private TaskMapper taskMapper;
-    private UserMapper userMapper;
-    private ProblemMapper problemMapper;
 
     private CompileService compileService;
 
@@ -41,8 +37,8 @@ public class TaskServiceImpl implements TaskService {
         task.setScore(0f);
         task.setStatus(TaskStatus.COMPILING);
 
-        taskMapper.insert(task);
-        // TODO: 异步执行任务
+        // 异步执行任务
+        compileService.generateAndPushTaskData(task);
 
         return task.getId();
     }

@@ -41,6 +41,7 @@ public class JsonTypeHandler extends BaseTypeHandler<JsonNode> {
 
     private JsonNode parseJson(String json) {
         try {
+            if(json == null) return null;
             return objectMapper.readTree(json);
         } catch (IOException e) {
             throw new RuntimeException("JSON 解析失败", e);

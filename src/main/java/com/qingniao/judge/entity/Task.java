@@ -4,10 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.qingniao.judge.enums.TaskStatus;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class Task {
+public class Task implements Serializable {
     private String id;
     private String problemID;
     private String userID;

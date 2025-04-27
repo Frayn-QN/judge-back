@@ -17,8 +17,8 @@ public class RestExceptionHandler {
     // 定义的业务异常
     @ExceptionHandler(BusinessException.class)
     public Result<String> businessException(BusinessException e) {
-        log.error("BusinessException: service={} code={}, message={}",
-                e.getService(), e.getCode(), e.getMessage(), e);
+//        log.error("BusinessException: service={} code={}, message={}",
+//                e.getService(), e.getCode(), e.getMessage(), e);
         return Result.failure(e.getCode(), e.getMessage());
     }
 
